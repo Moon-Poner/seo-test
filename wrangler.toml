@@ -4,3 +4,9 @@
 name = "seo-test"
 pages_build_output_dir = "./dist"
 compatibility_date = "2026-11-01"
+
+# 공개돼도 되는 환경변수 (Hono 에서 c.env.이름 으로 읽음)
+# ⚠️ 비밀번호류(GOOGLE_CLIENT_SECRET, SESSION_SECRET)는 여기 쓰면 GitHub에 올라가니까 절대 X
+#    → 로컬: .dev.vars / 배포: Cloudflare 대시보드 > 설정 > 변수 및 비밀 (유형: 비밀)
+[vars]
+GOOGLE_CLIENT_ID = "212397166235-f4u5hrdtbodb9kk4c5m876u5tq8i9ihc.apps.googleusercontent.com"

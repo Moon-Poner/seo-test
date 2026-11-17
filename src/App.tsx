@@ -4,6 +4,7 @@
 // - h1 은 페이지당 딱 1개, 그 아래 h2 → h3 순서로 계층 지키기
 // - 이미지는 alt + width/height (alt: 이미지 검색/접근성, 크기 지정: 레이아웃 흔들림(CLS) 방지)
 import SeoInspector from './components/SeoInspector'
+import AuthButton from './components/AuthButton'
 
 // 페이지에서 설명할 SEO 항목들 (index.html 의 [SEO n] 주석과 번호를 맞춰둠)
 const items = [
@@ -32,13 +33,17 @@ export default function App() {
             SEO 학습 랩
           </a>
           {/* nav: 주요 내비게이션. 내부 링크는 크롤러가 페이지를 발견하는 경로 */}
-          <nav aria-label="주요 메뉴">
-            <ul className="flex gap-4 text-sm text-slate-600">
-              <li><a className="hover:text-indigo-600" href="#checklist">체크리스트</a></li>
-              <li><a className="hover:text-indigo-600" href="#inspector">실시간 점검</a></li>
-              <li><a className="hover:text-indigo-600" href="#faq">FAQ</a></li>
-            </ul>
-          </nav>
+          <div className="flex items-center gap-6">
+            <nav aria-label="주요 메뉴" className="hidden sm:block">
+              <ul className="flex gap-4 text-sm text-slate-600">
+                <li><a className="hover:text-indigo-600" href="#checklist">체크리스트</a></li>
+                <li><a className="hover:text-indigo-600" href="#inspector">실시간 점검</a></li>
+                <li><a className="hover:text-indigo-600" href="#faq">FAQ</a></li>
+              </ul>
+            </nav>
+            {/* 구글 로그인 (server/auth.ts 와 짝) */}
+            <AuthButton />
+          </div>
         </div>
       </header>
 

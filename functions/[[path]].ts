@@ -6,8 +6,10 @@
 // - 로컬 확인: npm run preview (wrangler pages dev)
 import { Hono } from 'hono'
 import { handle } from 'hono/cloudflare-pages'
+import { auth, type Bindings } from '../server/auth'
 
-const app = new Hono()
+// Bindings: Cloudflare 환경변수 타입 (c.env.GOOGLE_CLIENT_ID 등에 자동완성/타입체크)
+const app = new Hono<{ Bindings: Bindings }>()
 
 // 사이트맵에 넣을 페이지 목록
 // 페이지가 늘어나면 여기에 추가 (또는 DB/CMS 에서 불러오도록 확장 가능 — 이게 Hono 로 동적 생성하는 이유)
@@ -68,6 +70,9 @@ app.use('/api/*', async (c, next) => {
   await next()
   c.header('X-Robots-Tag', 'noindex')
 })
+
+// 구글 로그인 라우트 묶음 (server/auth.ts) → /api/auth/google/login, /api/auth/me ...
+app.route('/api/auth', auth)
 
 app.get('/api/health', (c) => c.json({ ok: true, time: new Date().toISOString() }))
 
