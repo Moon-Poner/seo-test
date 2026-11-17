@@ -90,6 +90,11 @@ auth.get('/google/callback', async (c) => {
   // state 불일치 = 위조 요청이거나 쿠키 만료
   if (!code || !state || state !== savedState) return c.redirect('/?login_error=invalid_state')
 
+  // client_secret 이 환경변수에 아예 없으면 구글에 보내봤자 실패하니 바로 알려줌
+  // (.trim(): 대시보드에 붙여넣을 때 섞여 들어간 공백/줄바꿈 제거)
+  const clientSecret = c.env.GOOGLE_CLIENT_SECRET?.trim()
+  if (!clientSecret) return c.redirect('/?login_error=missing_secret')
+
   // code 를 토큰으로 교환 (서버 ↔ 구글 직접 통신, 여기서 client_secret 사용)
   const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
@@ -97,14 +102,21 @@ auth.get('/google/callback', async (c) => {
     body: new URLSearchParams({
       code,
       client_id: c.env.GOOGLE_CLIENT_ID,
-      client_secret: c.env.GOOGLE_CLIENT_SECRET,
+      client_secret: clientSecret,
       redirect_uri: redirectUri(c), // 로그인 시작 때와 정확히 같은 값이어야 함
       grant_type: 'authorization_code',
     }),
   })
   if (!tokenRes.ok) {
-    console.error('토큰 교환 실패', tokenRes.status, await tokenRes.text())
-    return c.redirect('/?login_error=token_exchange_failed')
+    // 구글 에러 응답 예: {"error":"invalid_client","error_description":"Unauthorized"}
+    // error 코드는 비밀정보가 아니므로 화면까지 전달해서 원인 파악을 쉽게 함
+    const body = await tokenRes.text()
+    console.error('토큰 교환 실패', tokenRes.status, body)
+    let reason = String(tokenRes.status)
+    try {
+      reason = (JSON.parse(body) as { error?: string }).error ?? reason
+    } catch {}
+    return c.redirect(`/?login_error=token_exchange_failed&reason=${encodeURIComponent(reason)}`)
   }
   const { access_token } = await tokenRes.json<{ access_token: string }>()
 
@@ -112,7 +124,7 @@ auth.get('/google/callback', async (c) => {
   const userRes = await fetch('https://openidconnect.googleapis.com/v1/userinfo', {
     headers: { Authorization: `Bearer ${access_token}` },
   })
-  if (!userRes.ok) return c.redirect('/?login_error=userinfo_failed')
+  if (!userRes.ok) return c.redirect(`/?login_error=userinfo_failed&reason=${userRes.status}`)
   const info = await userRes.json<{ sub: string; email: string; name?: string; picture?: string }>()
 
   const user: SessionUser = {

@@ -11,6 +11,7 @@ const errorText: Record<string, string> = {
   access_denied: '로그인을 취소했어요.',
   invalid_state: '로그인 요청이 만료됐거나 올바르지 않아요. 다시 시도해 주세요.',
   token_exchange_failed: '구글 토큰 교환에 실패했어요. (client secret 설정 확인)',
+  missing_secret: '서버에 GOOGLE_CLIENT_SECRET 이 설정돼 있지 않아요.',
   userinfo_failed: '사용자 정보를 가져오지 못했어요.',
 }
 
@@ -23,9 +24,12 @@ export default function AuthButton() {
     // URL 의 login_error 읽고 나서 주소창에서 지워주기 (새로고침 시 같은 에러 반복 방지)
     const url = new URL(window.location.href)
     const err = url.searchParams.get('login_error')
+    // reason: 구글이 돌려준 에러 코드 (예: invalid_client = 비밀번호 불일치, invalid_grant = 코드 만료/재사용)
+    const reason = url.searchParams.get('reason')
     if (err) {
-      setError(errorText[err] ?? `로그인 실패 (${err})`)
+      setError((errorText[err] ?? `로그인 실패 (${err})`) + (reason ? ` [${reason}]` : ''))
       url.searchParams.delete('login_error')
+      url.searchParams.delete('reason')
       window.history.replaceState(null, '', url.pathname + url.search + url.hash)
     }
 
