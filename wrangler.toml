@@ -1,0 +1,6 @@
+# Cloudflare Pages 설정
+# - pages_build_output_dir: 빌드 결과물 폴더 (wrangler pages dev / deploy 가 이걸 사용)
+# - functions/ 폴더는 자동으로 Pages Functions(= Hono 서버)로 인식됨
+name = "seo-test"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-11-01"

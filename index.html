@@ -1,0 +1,116 @@
+<!doctype html>
+<!--
+  [SEO 1] lang 속성
+  - 검색엔진/스크린리더에게 "이 문서는 한국어"라고 알려줌
+-->
+<html lang="ko">
+  <head>
+    <!-- [SEO 2] 기본 메타: 문자 인코딩 + 모바일 뷰포트 (모바일 친화성은 구글 랭킹 요소) -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--
+      [SEO 3] title
+      - 검색결과의 파란 제목으로 노출됨
+      - 핵심 키워드를 앞쪽에, 한글 기준 30자 안팎 권장 (너무 길면 잘림)
+    -->
+    <title>SEO 설정 학습 페이지 | React + Hono + Cloudflare</title>
+
+    <!--
+      [SEO 4] meta description
+      - 검색결과 제목 아래 회색 설명문 (랭킹 직접 요소는 아니지만 클릭률에 영향)
+      - 한글 기준 80~120자 정도 권장
+    -->
+    <meta
+      name="description"
+      content="title, meta description, canonical, Open Graph, 구조화 데이터, robots.txt, sitemap.xml까지 검색엔진 최적화(SEO) 기본 설정을 한 페이지에서 직접 보며 학습하는 예제입니다."
+    />
+
+    <!--
+      [SEO 5] robots 메타
+      - index: 색인 허용 / follow: 페이지 안 링크도 따라가도 됨
+      - 테스트 페이지를 숨기고 싶으면 "noindex, nofollow"로 바꾸면 됨
+    -->
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+
+    <!--
+      [SEO 6] canonical
+      - "이 페이지의 정식 주소는 이거다" 선언 → 중복 URL(쿼리스트링, www 유무 등) 문제 방지
+      - %VITE_SITE_URL% 은 빌드 때 .env 값으로 치환됨 (Vite 기능)
+    -->
+    <link rel="canonical" href="%VITE_SITE_URL%/" />
+
+    <!--
+      [SEO 7] Open Graph (카카오톡, 페이스북, 슬랙 등 링크 미리보기 카드)
+      - og:image 는 1200x630 PNG/JPG 권장, 반드시 절대 URL
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SEO 학습 랩" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:title" content="SEO 설정 학습 페이지" />
+    <meta property="og:description" content="검색엔진 최적화 기본 설정을 한 페이지에서 직접 보며 학습하는 예제" />
+    <meta property="og:url" content="%VITE_SITE_URL%/" />
+    <meta property="og:image" content="%VITE_SITE_URL%/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- [SEO 8] Twitter(X) 카드 - 없으면 OG 값을 대신 쓰지만 card 타입은 지정해 주는 게 좋음 -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SEO 설정 학습 페이지" />
+    <meta name="twitter:description" content="검색엔진 최적화 기본 설정을 한 페이지에서 직접 보며 학습하는 예제" />
+    <meta name="twitter:image" content="%VITE_SITE_URL%/og-image.png" />
+
+    <!-- [SEO 9] 파비콘 + 테마 컬러 (검색결과/모바일 탭에 표시) -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#4f46e5" />
+
+    <!--
+      [SEO 10] 구조화 데이터 (JSON-LD, schema.org)
+      - 검색엔진이 페이지 "의미"를 기계적으로 이해하게 해줌 → 리치 결과(FAQ 펼침 등) 후보
+      - 검증: https://search.google.com/test/rich-results
+    -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "SEO 학습 랩",
+            "url": "%VITE_SITE_URL%/",
+            "inLanguage": "ko-KR"
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "React 같은 SPA도 검색엔진에 잘 노출되나요?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "구글은 자바스크립트를 실행하지만 느리고 불완전할 수 있습니다. 이 예제처럼 빌드 시 HTML을 미리 렌더링(프리렌더)해 두면 모든 크롤러가 내용을 바로 읽을 수 있습니다."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "robots.txt와 meta robots의 차이는?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "robots.txt는 크롤러의 접근(크롤링) 자체를 제어하고, meta robots는 페이지를 읽은 뒤 색인할지 여부를 제어합니다."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body class="bg-slate-50 text-slate-800 antialiased">
+    <!--
+      [SEO 11] 프리렌더 자리
+      - 빌드 시 scripts/prerender.js 가 아래 root 안의 "app-html" 주석을 실제 React HTML로 바꿔 넣음
+      - 그래서 JS를 실행하지 않는 크롤러도 본문 내용을 그대로 읽을 수 있음
+    -->
+    <div id="root"><!--app-html--></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
