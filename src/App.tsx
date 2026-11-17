@@ -17,6 +17,7 @@ const items = [
   { no: 11, title: '프리렌더 (SSG)', where: 'scripts/prerender.js', desc: '빌드 때 React를 HTML로 미리 렌더 → JS 없이도 본문이 보임.' },
   { no: 12, title: 'robots.txt', where: 'functions/[[path]].ts', desc: 'Hono가 동적으로 생성. 크롤러 접근 규칙 + 사이트맵 위치 안내.' },
   { no: 13, title: 'sitemap.xml', where: 'functions/[[path]].ts', desc: 'Hono가 동적으로 생성. 크롤링할 URL 목록을 검색엔진에 제출.' },
+  { no: 14, title: '소유권 확인 메타태그', where: 'index.html', desc: '서치콘솔·서치어드바이저에 사이트 주인임을 증명. 확인 후에도 유지해야 함.' },
 ]
 
 export default function App() {
