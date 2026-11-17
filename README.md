@@ -45,4 +45,4 @@ npm run deploy    # wrangler 로 직접 배포
 - [Google Search Console](https://search.google.com/search-console) / [네이버 서치어드바이저](https://searchadvisor.naver.com/) 에 사이트 등록 → `sitemap.xml` 제출
 - [리치 결과 테스트](https://search.google.com/test/rich-results) 로 JSON-LD 검증
 - [PageSpeed Insights](https://pagespeed.web.dev/) 로 Core Web Vitals 확인
-- `public/og-image.png` 는 임시 그라디언트 이미지 → 1200x630 실제 이미지로 교체
+- OG 이미지: `public/og-image.jpg` (1200x630). 바꾼 뒤 카톡 미리보기가 안 바뀌면 카카오 공유 디버거에서 캐시 초기화
